@@ -10,12 +10,32 @@ import CoreData
 
 
 class CoreDataController{
-    func storeSquareStates(){
+    func storeSquareStates(currentBoardStates: BoardModel){
         clearBoardStates()
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let context = appDelegate.persistentContainer.viewContext
+
+        let currentBoardState = NSEntityDescription.insertNewObject(forEntityName: "BoardState", into: context)
+        currentBoardState.setValue(currentBoardStates.boardStates, forKey: "squareStates")
+        do {
+            try context.save()
+        } catch {
+            print(error)
+        }
         
     }
-    func storePlayerStates(){
+    func storePlayerStates(playerScores: PlayerModel){
         clearPlayerStates()
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let context = appDelegate.persistentContainer.viewContext
+        let currentPlayersState = NSEntityDescription.insertNewObject(forEntityName: "PlayerState", into: context)
+        currentPlayersState.setValue(playerScores.player1Score, forKey: "firstPlayerScore")
+        currentPlayersState.setValue(playerScores.player2Score, forKey: "secondPlayerScore")
+        do {
+            try context.save()
+        } catch {
+            print(error)
+        }
     }
     func getSquareStates() -> BoardModel{
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
