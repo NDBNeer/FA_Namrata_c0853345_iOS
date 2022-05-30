@@ -8,9 +8,10 @@
 import Foundation
 import UIKit
 class BoardModel{
-    var board = [UIButton]()
-    init(){
-        
+    var board: [UIButton] = [UIButton]()
+    var boardStates: [Int]
+    init(boardStates: [Int]){
+        self.boardStates = boardStates
     }
     
     func add(square: UIButton){
