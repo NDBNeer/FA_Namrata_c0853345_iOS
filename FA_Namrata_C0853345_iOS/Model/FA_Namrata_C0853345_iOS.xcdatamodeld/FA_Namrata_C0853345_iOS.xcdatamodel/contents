@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="11A491" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="false" userDefinedModelVersionIdentifier="">
-    <elements/>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21D49" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="BoardState" representedClassName="BoardState" syncable="YES" codeGenerationType="class">
+        <attribute name="squareStates" optional="YES" attributeType="Transformable"/>
+    </entity>
+    <entity name="PlayerStates" representedClassName="PlayerStates" syncable="YES" codeGenerationType="class">
+        <attribute name="firstPlayerScore" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="secondPlayerScore" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+    </entity>
+    <elements>
+        <element name="BoardState" positionX="-45" positionY="0" width="128" height="44"/>
+        <element name="PlayerStates" positionX="-18" positionY="36" width="128" height="59"/>
+    </elements>
 </model>
