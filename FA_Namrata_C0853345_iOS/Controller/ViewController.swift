@@ -84,10 +84,10 @@ class ViewController: UIViewController
         for (index, button) in currentBoardState.board.enumerated(){
             if(currentBoardState.boardStates[index] == 1){
                 currentBoardState.board[index].setTitle(CROSS, for: .normal)
-                //currentBoardState.board[index].setTitleColor(.red, for: .normal)
+                currentBoardState.board[index].setTitleColor(.red, for: .normal)
             }else if(currentBoardState.boardStates[index] == 2){
                 currentBoardState.board[index].setTitle(NOUGHT, for: .normal)
-                //currentBoardState.board[index].setTitleColor(.green, for: .normal)
+                currentBoardState.board[index].setTitleColor(.green, for: .normal)
             }else if(currentBoardState.boardStates[index] == 0){
                 button.setTitle(nil, for: .normal)
             }
@@ -290,14 +290,14 @@ class ViewController: UIViewController
             if(currentTurn == Turn.Nought)
             {
                 sender.setTitle(NOUGHT, for: .normal)
-                //sender.setTitleColor(.red, for: .normal)
+                sender.setTitleColor(.green, for: .normal)
                 currentTurn = Turn.Cross
                 turnLabel.text = CROSS
             }
             else if(currentTurn == Turn.Cross)
             {
                 sender.setTitle(CROSS, for: .normal)
-                //sender.setTitleColor(.green, for: .normal)
+                sender.setTitleColor(.red, for: .normal)
                 currentTurn = Turn.Nought
                 turnLabel.text = NOUGHT
             }
