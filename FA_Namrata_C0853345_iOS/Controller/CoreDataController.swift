@@ -26,6 +26,8 @@ class CoreDataController{
     }
     func storePlayerStates(playerScores: PlayerModel){
         clearPlayerStates()
+        print("Player1 scores:", playerScores.player1Score)
+        print("Player2 scores:", playerScores.player2Score)
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
         let currentPlayersState = NSEntityDescription.insertNewObject(forEntityName: "PlayerState", into: context)
@@ -69,6 +71,8 @@ class CoreDataController{
                     let playerState : PlayerModel = PlayerModel(
                         player1Score: player1_score, player2Score: player2_score
                     )
+                    print(" value1 found:",player1_score )
+                    print(" value2 found:",player2_score )
                     return playerState
                     
                 }
@@ -76,6 +80,7 @@ class CoreDataController{
         } catch {
             print(error)
         }
+        print("No values found ")
         return PlayerModel(player1Score: 0, player2Score: 0)
     }
     

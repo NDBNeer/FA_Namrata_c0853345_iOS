@@ -10,8 +10,8 @@ import UIKit
 class ViewController: UIViewController
 {
     let coreDataController: CoreDataController = CoreDataController()
-    let currentBoardState: BoardModel = BoardModel()
-    let currentPlayerScore: PlayerModel = PlayerModel(player1Score: 0, player2Score: 0)
+    let currentBoardState: BoardModel = BoardModel(boardStates: [0, 0, 0, 0, 0, 0, 0, 0, 0])
+    var currentPlayerScore: PlayerModel = PlayerModel(player1Score: 0, player2Score: 0)
     enum Turn {
         case Nought
         case Cross
@@ -35,7 +35,6 @@ class ViewController: UIViewController
     
     var NOUGHT = "O"
     var CROSS = "X"
-    var board = BoardModel( ) 
     
     var noughtsScore = 0
     var crossesScore = 0
@@ -48,7 +47,6 @@ class ViewController: UIViewController
         self.becomeFirstResponder()
         
         initBoard()
-        //initBoardAndPlayerScores()
         
         let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipes(_:)))
         let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipes(_:)))
@@ -59,8 +57,16 @@ class ViewController: UIViewController
         view.addGestureRecognizer(leftSwipe)
         view.addGestureRecognizer(rightSwipe)
         
-        lblPlayer1Score.text = "0"
-        lblPlayer2Score.text = "0"
+        currentBoardState.boardStates = coreDataController.getSquareStates().boardStates
+        currentPlayerScore = coreDataController.getPlayerStates()
+        crossesScore = currentPlayerScore.player1Score
+        noughtsScore = currentPlayerScore.player2Score
+        updateBoardStates()
+        
+        lblPlayer1Score.text = String(noughtsScore)
+        lblPlayer2Score.text = String(crossesScore)
+        
+        
     }
     @objc func handleSwipes(_ sender:UISwipeGestureRecognizer) {
             
@@ -74,18 +80,30 @@ class ViewController: UIViewController
         }
     }
     
+    func updateBoardStates(){
+        for (index, button) in currentBoardState.board.enumerated(){
+            if(currentBoardState.boardStates[index] == 1){
+                currentBoardState.board[index].setTitle(CROSS, for: .normal)
+            }else if(currentBoardState.boardStates[index] == 2){
+                currentBoardState.board[index].setTitle(NOUGHT, for: .normal)
+            }else if(currentBoardState.boardStates[index] == 0){
+                button.setTitle(nil, for: .normal)
+            }
+        }
+    }
+    
     func initBoard()
     {
         
-        board.add(square: a1)
-        board.add(square: a2)
-        board.add(square: a3)
-        board.add(square: b1)
-        board.add(square: b2)
-        board.add(square: b3)
-        board.add(square: c1)
-        board.add(square: c2)
-        board.add(square: c3)
+        currentBoardState.add(square: a1)
+        currentBoardState.add(square: a2)
+        currentBoardState.add(square: a3)
+        currentBoardState.add(square: b1)
+        currentBoardState.add(square: b2)
+        currentBoardState.add(square: b3)
+        currentBoardState.add(square: c1)
+        currentBoardState.add(square: c2)
+        currentBoardState.add(square: c3)
     }
     
     
@@ -128,19 +146,20 @@ class ViewController: UIViewController
         if checkForVictory(CROSS)
         {
             crossesScore += 1
-            resultAlert(title: "Crosses Win!")
+            resultAlert(title: "Player 1 Win!")
         }
         
         if checkForVictory(NOUGHT)
         {
             noughtsScore += 1
-            resultAlert(title: "Noughts Win!")
+            resultAlert(title: "Player 2 Win!")
         }
         
         if(fullBoard())
         {
             resultAlert(title: "Draw")
         }
+        coreDataController.storePlayerStates(playerScores: PlayerModel(player1Score: crossesScore, player2Score: noughtsScore))
     }
     
     func checkForVictory(_ s :String) -> Bool
@@ -207,14 +226,15 @@ class ViewController: UIViewController
         resetBoard()
         noughtsScore = 0
         crossesScore = 0
-        lblPlayer1Score.text = String(noughtsScore)
-        lblPlayer2Score.text = String(crossesScore)
+        coreDataController.storePlayerStates(playerScores: PlayerModel(player1Score: crossesScore, player2Score: noughtsScore))
+        lblPlayer1Score.text = String(crossesScore)
+        lblPlayer2Score.text = String(noughtsScore)
 
     }
     
     func resetBoard()
     {
-        for button in board.board
+        for button in currentBoardState.board
         {
             button.setTitle(nil, for: .normal)
             button.isEnabled = true
@@ -230,11 +250,13 @@ class ViewController: UIViewController
             turnLabel.text = NOUGHT
         }
         currentTurn = firstTurn
+        currentBoardState.boardStates = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        coreDataController.storeSquareStates(currentBoardStates: currentBoardState)
     }
     
     func fullBoard() -> Bool
     {
-        for button in board.board
+        for button in currentBoardState.board
         {
             if button.title(for: .normal) == nil
             {
@@ -244,29 +266,40 @@ class ViewController: UIViewController
         return true
     }
     
-    
+    func getCurrentBoardState(){
+        for (index, button) in currentBoardState.board.enumerated(){
+            if(button.titleLabel!.text == CROSS){
+                currentBoardState.boardStates[index] = 1
+            }else if(button.titleLabel!.text == NOUGHT){
+                currentBoardState.boardStates[index] = 2
+            }else if(button.titleLabel!.text == nil){
+                currentBoardState.boardStates[index] = 0
+            }
+        }
+        coreDataController.storeSquareStates(currentBoardStates: currentBoardState)
+    }
    
     func addToBoard(_ sender: UIButton)
     {
+        
         lastBox = sender
         if(sender.title(for: .normal) == nil)
         {
             if(currentTurn == Turn.Nought)
             {
-//                updateBoard(checkedBoxAddress: recognizeSender(sender: sender), checkedBoxPlayer: Turn.Nought)
                 sender.setTitle(NOUGHT, for: .normal)
                 currentTurn = Turn.Cross
                 turnLabel.text = CROSS
             }
             else if(currentTurn == Turn.Cross)
             {
-//                updateBoard(checkedBoxAddress: recognizeSender(sender: sender), checkedBoxPlayer: Turn.Cross)
                 sender.setTitle(CROSS, for: .normal)
                 currentTurn = Turn.Nought
                 turnLabel.text = NOUGHT
             }
             sender.isEnabled = false
         }
+        getCurrentBoardState()
     }
     
 }
